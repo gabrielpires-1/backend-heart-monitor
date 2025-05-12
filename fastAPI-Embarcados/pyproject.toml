@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "python-backend"
+version = "0.1.0"
+description = ""
+authors = ["Gabriel Pires <gpac@cesar.school>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+fastapi = {extras = ["all"], version = ">=0.115.11,<0.116.0"}
+psycopg2-binary = ">=2.9.10,<3.0.0"
+python-dotenv = ">=1.0.1,<2.0.0"
+firebase-admin = "^6.1.0"
+sse-starlette = "^2.3.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.3"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
