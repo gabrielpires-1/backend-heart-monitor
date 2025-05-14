@@ -2,6 +2,10 @@ import os
 import firebase_admin
 from firebase_admin import db, credentials
 from typing import Dict, Optional, Any
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 db_url = os.getenv("FIREBASE_DATABASE_URL")
 

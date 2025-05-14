@@ -77,4 +77,14 @@ class HeartRateService:
                         reading_id = str(int(time.time() * 1000))
                         callback(reading_id, data)
         
-        self.ref.listen(on_event)
+        self.repository.ref.listen(on_event)
+
+    def add_reading(self, reading_data: dict) -> str:
+        """
+        Adiciona uma nova leitura de batimento cardíaco
+        """
+        if "timestamp" not in reading_data or not reading_data["timestamp"]:
+            from datetime import datetime
+            reading_data["timestamp"] = datetime.now().isoformat()
+        reading_id = self.repository.add_reading(reading_data)
+        return reading_id

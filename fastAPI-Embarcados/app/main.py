@@ -120,3 +120,12 @@ def get_latest_readings(count: int):
         )
     
     return heart_rate_service.get_latest_readings(count)
+
+@app.post("/heartrate/simulate", response_model=HeartRateResponse)
+def simulate_heart_rate(reading: HeartRateReading):
+    """
+    Simula uma nova leitura de batimentos cardíacos,
+    exatamente como enviada pelo sensor
+    """
+    reading_id = heart_rate_service.add_reading(reading.dict())
+    return HeartRateResponse(id=reading_id, data=reading)

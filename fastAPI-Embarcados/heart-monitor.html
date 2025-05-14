@@ -66,7 +66,7 @@
             }
 
             updateStatus('Connecting...');
-            eventSource = new EventSource('http://localhost:8080/heartrate/stream');
+            eventSource = new EventSource('http://localhost:8000/heartrate/stream');
 
             eventSource.onopen = function () {
                 updateStatus('Connected! Waiting for events...');
