@@ -23,3 +23,13 @@ class HeartRateReading(BaseModel):
 class HeartRateResponse(BaseModel):
     id: str
     data: HeartRateReading
+
+class MeasurementControl(BaseModel):
+    is_paused: bool = False
+    last_updated: Optional[str] = None
+    updated_by: Optional[str] = "api"
+
+class MeasurementControlResponse(BaseModel):
+    is_paused: bool
+    last_updated: Optional[str] = None
+    updated_by: Optional[str] = None

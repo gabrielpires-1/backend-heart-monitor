@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
-from app.services import HeartRateService
-from app.models import HeartRateReading, HeartRateResponse
+from app.services import HeartRateService, MeasurementControlService
+from app.models import HeartRateReading, HeartRateResponse, MeasurementControlResponse
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
@@ -23,6 +23,7 @@ app.add_middleware(
 )
 
 heart_rate_service = HeartRateService()
+measurement_control_service = MeasurementControlService()
 
 @app.get("/")
 def read_root():
@@ -129,3 +130,31 @@ def simulate_heart_rate(reading: HeartRateReading):
     """
     reading_id = heart_rate_service.add_reading(reading.dict())
     return HeartRateResponse(id=reading_id, data=reading)
+
+@app.get("/measurement/status", response_model=MeasurementControlResponse)
+def get_measurement_status():
+    """
+    Retorna o status atual da medição (pausado/ativo)
+    """
+    return measurement_control_service.get_control_status()
+
+@app.post("/measurement/pause", response_model=MeasurementControlResponse)
+def pause_measurements():
+    """
+    Pausa as medições de batimento cardíaco na ESP32
+    """
+    return measurement_control_service.pause_measurements()
+
+@app.post("/measurement/resume", response_model=MeasurementControlResponse)
+def resume_measurements():
+    """
+    Retoma as medições de batimento cardíaco na ESP32
+    """
+    return measurement_control_service.resume_measurements()
+
+@app.post("/measurement/toggle", response_model=MeasurementControlResponse)
+def toggle_measurements():
+    """
+    Alterna entre pausar/retomar as medições
+    """
+    return measurement_control_service.toggle_measurements()

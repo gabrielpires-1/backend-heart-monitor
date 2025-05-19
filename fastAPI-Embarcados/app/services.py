@@ -1,5 +1,5 @@
-from app.repositories import HeartRateRepository
-from app.models import HeartRateReading, HeartRateResponse
+from app.repositories import HeartRateRepository, MeasurementControlRepository
+from app.models import HeartRateReading, HeartRateResponse, MeasurementControlResponse
 from typing import List, Optional
 
 class HeartRateService:
@@ -88,3 +88,48 @@ class HeartRateService:
             reading_data["timestamp"] = datetime.now().isoformat()
         reading_id = self.repository.add_reading(reading_data)
         return reading_id
+    
+class MeasurementControlService:
+    def __init__(self):
+        self.repository = MeasurementControlRepository()
+    
+    def get_control_status(self) -> MeasurementControlResponse:
+        """Get current measurement control status"""
+        status_data = self.repository.get_control_status()
+        
+        if not status_data:
+            # Se não existe, cria com status inicial (não pausado)
+            status_data = self.repository.set_control_status(False, "system")
+        
+        return MeasurementControlResponse(
+            is_paused=status_data.get("is_paused", False),
+            last_updated=status_data.get("last_updated"),
+            updated_by=status_data.get("updated_by", "system")
+        )
+    
+    def pause_measurements(self) -> MeasurementControlResponse:
+        """Pause heart rate measurements"""
+        status_data = self.repository.set_control_status(True, "api")
+        return MeasurementControlResponse(
+            is_paused=status_data["is_paused"],
+            last_updated=status_data["last_updated"],
+            updated_by=status_data["updated_by"]
+        )
+    
+    def resume_measurements(self) -> MeasurementControlResponse:
+        """Resume heart rate measurements"""
+        status_data = self.repository.set_control_status(False, "api")
+        return MeasurementControlResponse(
+            is_paused=status_data["is_paused"],
+            last_updated=status_data["last_updated"],
+            updated_by=status_data["updated_by"]
+        )
+    
+    def toggle_measurements(self) -> MeasurementControlResponse:
+        """Toggle measurement state (pause/resume)"""
+        current_status = self.get_control_status()
+        
+        if current_status.is_paused:
+            return self.resume_measurements()
+        else:
+            return self.pause_measurements()
